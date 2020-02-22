@@ -1,4 +1,9 @@
 import tkinter as tk
+import mysql.connector as m
+
+db = m.connect(host='localhost', user='root', passwd='removed')
+mycursor = db.cursor()
+mycursor.execute('USE syntechdb')
 
 
 def quit_prompt():
@@ -40,7 +45,7 @@ def ret_data():
     button_retall = tk.Button(canvas_ret, text='Retrieve All Tables', font=('Quicksand', 15))
     button_retall.place(relheight=0.07, relwidth=0.5, relx=0.25, rely=0.25)
 
-    button_select_tbl = tk.Button(canvas_ret, text='Select Tables to Retrieve', font=('Quicksand', 15))
+    button_select_tbl = tk.Button(canvas_ret, text='Select Tables to Retrieve', font=('Quicksand', 15), command=selectdata)
     button_select_tbl.place(relheight=0.07, relwidth=0.5, relx=0.25, rely=0.4)
 
     label_where = tk.Label(canvas_ret, text='Enter a Where Clause (Optional)', font=('Quicksand', 15), bg='#E5FDF8')
@@ -74,6 +79,47 @@ def ent_data():
 
     button_back_ent = tk.Button(canvas_ent, text='< Back', font=('Quicksand', 15), command=back)
     button_back_ent.place(relheight=0.05, relwidth=0.1, relx=0.05, rely=0.05)
+
+
+def show_table(table1):
+    print('SELECT * FROM %s' %table1)
+    mycursor.execute('SELECT * FROM %s' %table1)
+
+    print(mycursor)
+    show_canvas = tk.Canvas(sel_canvas)
+    show_canvas.place(relheight=1, relwidth=1, relx=0, rely=0)
+
+    for k in mycursor:
+        print(k)
+
+
+def selectdata():
+
+    def back():
+        sel_canvas.destroy()
+
+    mycursor.execute('SHOW TABLES')
+
+    global sel_canvas
+
+    sel_canvas = tk.Canvas()
+    sel_canvas.place(relheight=1, relwidth=1, relx=0, rely=0)
+
+    button_back = tk.Button(sel_canvas, text='< Back', font=('Quicksand', 15), command=back)
+    button_back.place(relheight=0.05, relwidth=0.1, relx=0.05, rely=0.05)
+
+    tbls = [i for i in mycursor]
+    btns = []
+
+
+    for table in tbls:
+
+
+        opt = tk.Button(sel_canvas, text=table, font=('Quicksand', 10), command=lambda: show_table(table))
+        btns.append(opt)
+
+    for i in range(len(btns)):
+        btns[i].place(relheight=1 / len(tbls), relwidth=0.6, relx=0.2, rely=1/len(tbls)*i)
 
 
 root = tk.Tk()
