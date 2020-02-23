@@ -1,10 +1,9 @@
 import tkinter as tk
 import mysql.connector as m
 
-db = m.connect(host='localhost', user='root', passwd='removed')
-mycursor = db.cursor()
-mycursor.execute('USE syntechdb')
+db = m.connect(host='localhost', user='root', passwd='1qaz2wsx', database='syntechdb')
 
+mycursor = db.cursor()
 
 def quit_prompt():
 
@@ -14,7 +13,7 @@ def quit_prompt():
     def quit_decline():
         prompt.destroy()
 
-    quit_msg = 'Are you sure you want to quit?\nYour unsaved work will not be saved and u blah blah blah'
+    quit_msg = 'rly?'
 
     prompt = tk.Frame(canvas, bg='#E5FDF8')
     prompt.place(relheight=1, relwidth=1, relx=0, rely=0)
@@ -81,16 +80,12 @@ def ent_data():
     button_back_ent.place(relheight=0.05, relwidth=0.1, relx=0.05, rely=0.05)
 
 
-def show_table(table1):
-    print('SELECT * FROM %s' %table1)
-    mycursor.execute('SELECT * FROM %s' %table1)
+def show_table(table):
 
-    print(mycursor)
-    show_canvas = tk.Canvas(sel_canvas)
-    show_canvas.place(relheight=1, relwidth=1, relx=0, rely=0)
+    r = mycursor.execute(f'SELECT * FROM {table}')
+    m = mycursor.fetchall()
 
-    for k in mycursor:
-        print(k)
+
 
 
 def selectdata():
@@ -108,18 +103,27 @@ def selectdata():
     button_back = tk.Button(sel_canvas, text='< Back', font=('Quicksand', 15), command=back)
     button_back.place(relheight=0.05, relwidth=0.1, relx=0.05, rely=0.05)
 
+    search = tk.Entry(font=('Quicksand', 28))
+    search.place(relheight=0.07, relwidth=0.4, relx=0.295, rely=0.2)
+
+    enter = tk.Button(text='Search', font=('Quicksand', 15), command=lambda: show_table(search.get()))
+    enter.place(relheight=0.07, relwidth=0.1, relx=0.7, rely=0.2)
+
     tbls = [i for i in mycursor]
     btns = []
+
+    dynamic_height = 1/(1.5* len(tbls))
 
 
     for table in tbls:
 
-
-        opt = tk.Button(sel_canvas, text=table, font=('Quicksand', 10), command=lambda: show_table(table))
+        opt = tk.Label(sel_canvas, text=table, font=('Quicksand', int(100 * dynamic_height)))
         btns.append(opt)
 
+
     for i in range(len(btns)):
-        btns[i].place(relheight=1 / len(tbls), relwidth=0.6, relx=0.2, rely=1/len(tbls)*i)
+
+        btns[i].place(relheight=dynamic_height, relwidth=1, relx=0, rely=dynamic_height*i + 0.3)
 
 
 root = tk.Tk()
