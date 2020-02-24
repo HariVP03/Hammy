@@ -82,23 +82,50 @@ def ent_data():
 
 def show_table(table):
 
+    def back():
+        display_canvas.destroy()
+        button_back.destroy()
+        disp.destroy()
+
     r = mycursor.execute(f'SELECT * FROM {table}')
     m = mycursor.fetchall()
 
+    cardinality = len(m)
+    degree = len(m[0])
 
+    print(m)
+
+    display_canvas = tk.Canvas(bg='#E5FDF8')
+    display_canvas.place(relheight=1, relwidth=1 ,relx=0, rely=0)
+
+    button_back = tk.Button(display_canvas, text='< Back', font=('Quicksand', 15), command=back)
+    button_back.place(relheight=0.05, relwidth=0.1, relx=0.85, rely=0.05)
+
+    for i in range(cardinality):
+        for j in range(degree):
+
+            disp = tk.Label(display_canvas, text=m[i][j], font=('Quicksand', 10* int((1/cardinality)*(1/degree))), bg='#E5FDF8')
+            disp.grid(row=i, column=j, ipadx=1.5, ipady=1.5)
 
 
 def selectdata():
 
     def back():
         sel_canvas.destroy()
+        button_back.destroy()
+        search.destroy()
+        enter.destroy()
+        title.destroy()
 
     mycursor.execute('SHOW TABLES')
 
     global sel_canvas
 
-    sel_canvas = tk.Canvas()
+    sel_canvas = tk.Canvas(bg='#E5FDF8')
     sel_canvas.place(relheight=1, relwidth=1, relx=0, rely=0)
+
+    title = tk.Label(font=('Quicksand', 30), text='Select a table to display', bg='#E5FDF8')
+    title.place(relheight=0.2, relwidth=0.4, relx=0.295, rely=0)
 
     button_back = tk.Button(sel_canvas, text='< Back', font=('Quicksand', 15), command=back)
     button_back.place(relheight=0.05, relwidth=0.1, relx=0.05, rely=0.05)
@@ -117,7 +144,7 @@ def selectdata():
 
     for table in tbls:
 
-        opt = tk.Label(sel_canvas, text=table, font=('Quicksand', int(100 * dynamic_height)))
+        opt = tk.Label(sel_canvas, text=table, font=('Quicksand', int(100 * dynamic_height)), bg='#E5FDF8')
         btns.append(opt)
 
 
